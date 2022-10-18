@@ -1,25 +1,28 @@
 ---
-
 - hosts: all
   become: true
   pre_tasks:
+
     - name: install update (CentOS)
+      tags: always
       yum:
         update_only: yes
         update_cache: yes
       when: ansible_distribute == CentOS
 
     - name: install update (Ubuntu)
+      tags: always
       apt:
         upgrade: dist
         update_cache: yes
       when: ansible_distribute == Ubuntu
-
+---
 - host: web_servers
   become: true
   task:
 
     - name: install apache2 and php package
+      tags: apache,apache2,ubuntu
       apt:
         name:
           - apache2
@@ -28,16 +31,8 @@
       when: ansible_distribution == "Ubuntu"
   #or when: ansible_distribution in ["Debian", "Ubuntu"]
 
-    - name: Restart service httpd, in all cases
-      ansible.builtin.service:
-        name:
-          - apache2
-          - libapache2-mod-php
-        state: restarted
-        enabled: yes
-      when: ansible_distribution == "Ubuntu"
-
     - name: install apache2 and php package
+      tags: apache,httpd,centos
       yum:
         name:
           - httpd
@@ -61,19 +56,30 @@
         state: enabled
       when: ansible_distribution == "CentOS"
 
+    - name: copy default html file for site
+      tages: apache,apache2,httpd
+      copy:
+        src: default_site.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: 0644
+---
 - host: db_servers
   become: true
   task:
 
     - name: install mariadb package (CentOS)
+      tags: centos,db,mariadb
       yum:
         name: mariadb
         state: latest
       when: ansible_distribution == "CentOS"
 
     - name: install mariadb package (Ubuntu)
+      tags: ubuntu,mariadb,db
       apt:
-        name: mariadb
+        name: mariadb-server
         state: latest
       when: ansible_distribution == "Ubuntu"
 
@@ -90,12 +96,13 @@
         permanent: yes
         state: enabled
       when: ansible_distribution == "CentOS"
-
+---
 - host: file_servers
   become: true
   task:
 
     - name: install samba package (CentOS)
+      tags: samba
       package:
         name: samba
         state: latest
@@ -116,3 +123,4 @@
         state: enabled
       when: ansible_distribution == "CentOS"
 
+##"tags: always": it means all tags and run this section with all tags

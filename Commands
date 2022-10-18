@@ -1,0 +1,14 @@
+show list of tags in my playbook
+---------------------------------
+$ ansible-playbook --list-tags site.yaml
+
+run palaybook
+---------------
+$ ansible-playbook --ask-become-pass site.yaml
+
+run task for specific tags
+----------------------------
+$ ansible-playbook --tags "centos,db" --ask-become-pass site.yaml
+# this run tasks that have "tages: centos" and "tags: db" and "tags: always".
+
+

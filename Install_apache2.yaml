@@ -26,5 +26,5 @@
         permanent: yes
         state: enabled
 
-## ansible-playbook --ask-become-pass Install_apache.yaml
+## ansible-playbook --ask-become-pass Install_apache2.yaml
 #install and start apache2 and php on both Ubuntu and CentOS distributes 
