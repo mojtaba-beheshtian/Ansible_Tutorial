@@ -1,0 +1,118 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+    - name: install update (CentOS)
+      yum:
+        update_only: yes
+        update_cache: yes
+      when: ansible_distribute == CentOS
+
+    - name: install update (Ubuntu)
+      apt:
+        upgrade: dist
+        update_cache: yes
+      when: ansible_distribute == Ubuntu
+
+- host: web_servers
+  become: true
+  task:
+
+    - name: install apache2 and php package
+      apt:
+        name:
+          - apache2
+          - libapache2-mod-php
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+  #or when: ansible_distribution in ["Debian", "Ubuntu"]
+
+    - name: Restart service httpd, in all cases
+      ansible.builtin.service:
+        name:
+          - apache2
+          - libapache2-mod-php
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "Ubuntu"
+
+    - name: install apache2 and php package
+      yum:
+        name:
+          - httpd
+          - php
+        state: latest
+      when: ansible_distribution == "CentOS"
+      
+    - name: Restart and enable service httpd, in all cases
+      ansible.builtin.service:
+        name: 
+          - httpd
+          - php
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "CentOS"
+
+    - name: permit traffic in default zone for http service
+      ansible.posix.firewalld:
+        port: 80
+        permanent: yes
+        state: enabled
+      when: ansible_distribution == "CentOS"
+
+- host: db_servers
+  become: true
+  task:
+
+    - name: install mariadb package (CentOS)
+      yum:
+        name: mariadb
+        state: latest
+      when: ansible_distribution == "CentOS"
+
+    - name: install mariadb package (Ubuntu)
+      apt:
+        name: mariadb
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Restart and enable service mariadb in all cases
+      ansible.builtin.service:
+        name: mariadb
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "CentOS"
+
+    - name: permit traffic in default zone for http service
+      ansible.posix.firewalld:
+        port: 3306 
+        permanent: yes
+        state: enabled
+      when: ansible_distribution == "CentOS"
+
+- host: file_servers
+  become: true
+  task:
+
+    - name: install samba package (CentOS)
+      package:
+        name: samba
+        state: latest
+
+    - name: Restart and enable service samba in all cases
+      ansible.builtin.service:
+        name: samba
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "CentOS"
+
+    - name: permit traffic in default zone for http service
+      ansible.posix.firewalld:
+        ports:
+          - 445
+          - 139
+        permanent: yes
+        state: enabled
+      when: ansible_distribution == "CentOS"
+
