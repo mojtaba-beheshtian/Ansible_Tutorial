@@ -1,0 +1,30 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+    - name: install apache2 and php package
+      package:
+        name:
+          - "{{ apache_package }}"
+          - "{{ php_package }}"
+        state: latest
+        update_cache: yes
+    
+    - name: Restart service in all cases
+      ansible.builtin.service:
+        name:
+          - "{{ apache_package }}"
+          - "{{ php_package }}"
+        state: restarted
+        enabled: yes
+
+    - name: permit traffic in default zone for http service
+      ansible.posix.firewalld:
+        port: 80
+        permanent: yes
+        state: enabled
+
+## ansible-playbook --ask-become-pass Install_apache.yaml
+#install and start apache2 and php on both Ubuntu and CentOS distributes 

@@ -4,43 +4,51 @@
   become: true
   tasks:
 
-    - name: update repository index
+  
+    - name: install apache2 and php package
       apt:
+        name:
+          - apache2
+          - libapache2-mod-php
+        state: latest
         update_cache: yes
       when: ansible_distribution == "Ubuntu"
   #or when: ansible_distribution in ["Debian", "Ubuntu"]
-  
-    - name: install apache2 package
-      apt:
-        name: apache2
-        state: latest
-      when: ansible_distribution == "Ubuntu"
 
-    - name: add php support for apache
-      apt:
-        name: libapache2-mod-php
-        state: latest
+    - name: Restart service httpd, in all cases
+      ansible.builtin.service:
+        name:
+          - apache2
+          - libapache2-mod-php
+        state: restarted
+        enabled: yes
       when: ansible_distribution == "Ubuntu"
-
 
 ## ansible-playbook --ask-become-pass Install_apache.yaml
 
 # if one of servers is Centos then at the result you see "skipp=3" because can not run apt and if you dont use "when: ansible_distribution == "Ubuntu" " then at the result you see "failed=1"
 
-    - name: update repository index
+    - name: install apache2 and php package
       yum:
+        name:
+          - httpd
+          - php
+        state: latest
         update_cache: yes
       when: ansible_distribution == "CentOS"
-  #or when: ansible_distribution in ["Debian", "Ubuntu"]
-
-    - name: install apache2 package
-      yum:
-        name: httpd
-        state: latest
+      
+    - name: Restart and enable service httpd, in all cases
+      ansible.builtin.service:
+        name: 
+          - httpd
+          - php
+        state: restarted
+        enabled: yes
       when: ansible_distribution == "CentOS"
 
-    - name: add php support for apache
-      yum:
-        name: php
-        state: latest
+    - name: permit traffic in default zone for http service
+      ansible.posix.firewalld:
+        port: 80
+        permanent: yes
+        state: enabled
       when: ansible_distribution == "CentOS"
