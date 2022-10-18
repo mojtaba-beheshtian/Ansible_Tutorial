@@ -1,0 +1,64 @@
+Reference:
+1. https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
+2. Mr.Jay LaCroix
+
+ther nodes requirements:
+----------------------------
+ Opessh
+
+config file path in control node
+----------------------------------
+$ echo $(ANSIBLE_CONFIG)
+
+copy control node public key to all nodes
+--------------------------------------------
+$ ssh-copy-id -i ~/.ssh/id_rsa.pub ssh 192.168.1.1
+
+$ ansible all --key-file ~/.ssh/id_rsa.pub -i inventory -m ping
+#test the connection between controle node and other nodes.
+# -m : module 
+
+$ vi ansible.cfg
+[defauls]
+inventory = inventory
+private_key_file = ~/.ssh/id_rsa.pub
+
+$ ansible all -m ping 
+
+$ ansible all --list-hosts
+#show list all hosts
+
+$ ansible all -m gather_facts
+#show all information about that server
+
+$ ansible all -m gather_facts --limit 192.168.1.2
+#show all information about 192.168.1.2
+
+$ ansible all -m apt -a update_cashe=true --become --ask-become-pass
+# -- become: swich to root permission
+# -a: argument
+# this command mean check the update packages is done or not on servers
+
+$ ansible all -m apt -a name=vim-nox --become --ask-become-pass
+#install vim-nox in all servers.
+ 
+$ ansible all -m apt -a "name=sshd state=latest" --become -- ask-become-pass 
+# this command install or update sshd package in all servers.
+
+$ ansible all -m apt -a "upgrade=dist" --become -- ask-become-pass
+# update all packages in all servers. "sudo apt update && apt dist-upgrade"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
