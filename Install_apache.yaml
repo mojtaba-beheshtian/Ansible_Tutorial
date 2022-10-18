@@ -15,20 +15,11 @@
       when: ansible_distribution == "Ubuntu"
   #or when: ansible_distribution in ["Debian", "Ubuntu"]
 
-    - name: Restart service httpd, in all cases
-      ansible.builtin.service:
-        name:
-          - apache2
-          - libapache2-mod-php
-        state: restarted
-        enabled: yes
-      when: ansible_distribution == "Ubuntu"
-
 ## ansible-playbook --ask-become-pass Install_apache.yaml
 
 # if one of servers is Centos then at the result you see "skipp=3" because can not run apt and if you dont use "when: ansible_distribution == "Ubuntu" " then at the result you see "failed=1"
 
-    - name: install apache2 and php package
+    - name: install httpd and php on CentOS
       yum:
         name:
           - httpd
@@ -37,8 +28,8 @@
         update_cache: yes
       when: ansible_distribution == "CentOS"
       
-    - name: Restart and enable service httpd, in all cases
-      ansible.builtin.service:
+    - name: Restart and enable service httpd on CentOS
+      service:
         name: 
           - httpd
           - php

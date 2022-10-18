@@ -13,7 +13,7 @@
         update_cache: yes
     
     - name: Restart service in all cases
-      ansible.builtin.service:
+      service:
         name:
           - "{{ apache_package }}"
           - "{{ php_package }}"

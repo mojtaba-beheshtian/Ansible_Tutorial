@@ -17,11 +17,28 @@
         update_cache: yes
       when: ansible_distribute == Ubuntu
 ---
+- hosts: workstations
+  become: true
+  tasks:
+
+    - name: install unzip
+      package:
+        name: unzip
+
+    - name: install terraform
+      unarchive:
+        src: https://releases.hashicrop.com/terraform/0.12.28/terraform_0.12.28_linux_md64.zip
+        dest: /usr/local/bin
+        remote_src: yes
+        mode: 0755
+        owner: root
+        group: root
+---
 - host: web_servers
   become: true
   task:
 
-    - name: install apache2 and php package
+    - name: install apache2 and php on Ubuntu
       tags: apache,apache2,ubuntu
       apt:
         name:
@@ -31,7 +48,7 @@
       when: ansible_distribution == "Ubuntu"
   #or when: ansible_distribution in ["Debian", "Ubuntu"]
 
-    - name: install apache2 and php package
+    - name: install httpd and php oc CentOS
       tags: apache,httpd,centos
       yum:
         name:
@@ -40,8 +57,18 @@
         state: latest
       when: ansible_distribution == "CentOS"
       
-    - name: Restart and enable service httpd, in all cases
-      ansible.builtin.service:
+    - name: Change e-mail address for admin
+      tags: apache,httpd,centos
+      lineinfile:
+        path: /etc/httpd/config/httpd.conf
+        regexp: '^ServerAdmin'
+        line: ServerAdmin Somebody@somewhere.net
+      when: ansibe_distribution == "CentOS"
+      register: httpd
+
+    - name: Restart and enable service httpd on CentOS
+      tags: apache,centos,httpd
+      service:
         name: 
           - httpd
           - php
@@ -57,7 +84,7 @@
       when: ansible_distribution == "CentOS"
 
     - name: copy default html file for site
-      tages: apache,apache2,httpd
+      tags: apache,apache2,httpd
       copy:
         src: default_site.html
         dest: /var/www/html/index.html
@@ -83,8 +110,8 @@
         state: latest
       when: ansible_distribution == "Ubuntu"
 
-    - name: Restart and enable service mariadb in all cases
-      ansible.builtin.service:
+    - name: Restart and enable service mariadb onCentOS
+      service:
         name: mariadb
         state: restarted
         enabled: yes
@@ -107,8 +134,8 @@
         name: samba
         state: latest
 
-    - name: Restart and enable service samba in all cases
-      ansible.builtin.service:
+    - name: Restart and enable service samba on CentOS
+      service:
         name: samba
         state: restarted
         enabled: yes
