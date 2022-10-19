@@ -1,37 +1,19 @@
-- name: Install apache2 and php on (Ubuntu)
-  tags: ubuntu,apache,apache2
-  apt:
+- name: Install apache and php 
+  tags: apache,httpd,php
+  package:
     name:
-      - apache2
-      - libapache2-mod-php
+      - "{{ apache_package_name }}"
+      - "{{ php_package_name }}"
     state: latest
-  when: ansible_distribute == "Ubuntu"
 
 - name: copy default html file for site
-  tags: apache,apache2,httpd
+  tags: apache,httpd
   copy:
     src: default_site.html
     dest: /var/www/html/index.html
     owner: root
     group: root
     mode: 0644
-
-- name: Restart apache2 service
-  tags: ubuntu,apache,apache2
-  service:
-    name: apache2
-    state: restarted
-    enabled: yes
-  when: ansible_distribute == "Ubuntu"
----
-- name: Install httpd and php on (CentOS)
-  tags: centos,apache,httpd
-  yum:
-    name:
-      - httpd
-      - php
-    state: latest
-  when: ansible_distribute == "CentOS"
 
 - name: Change e-mail address for admin
   tags: apache,httpd,centos
@@ -40,22 +22,5 @@
     regexp: '^ServerAdmin'
     line: ServerAdmin Somebody@somewhere.net
   when: ansibe_distribution == "CentOS"
-  register: httpd
-
-- name: copy default html file for site
-  tags: apache,apache2,httpd
-    copy:
-    src: default_site.html
-    dest: /var/www/html/index.html
-    owner: root
-    group: root
-    mode: 0644
-
-- name: Restart httpd service
-  tags: centos,apache,httpd
-  service:
-    name: httpd
-    state: restarted
-    enabled: yes
-  when: ansible_distribute == "CentOS"
+  notify: restart_apache 
 

@@ -3,3 +3,13 @@
     user: alex
     key: "ssk_idrsa AAAC.........."
 
+- name: generate ssh_config fiile from template
+  tags: ssh
+  template:
+    src: "{{ ssh_tamplate_file }}"
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart_sshd
+
