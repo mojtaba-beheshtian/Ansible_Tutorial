@@ -1,0 +1,44 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+
+    - name: install update (CentOS)
+      tags: always
+      yum:
+        update_only: yes
+        update_cache: yes
+      when: ansible_distribute == CentOS
+
+    - name: install update (Ubuntu)
+      tags: always
+      apt:
+        upgrade: dist
+        update_cache: yes
+      when: ansible_distribute == Ubuntu
+---
+- host: all
+  become: true
+  tasks:
+
+    - name: Create user name
+      tags: always
+      user:
+        name: alix
+        groups: root
+
+    - name: add ssk key foe Alex
+      tags: always
+      authorized_key:
+        user: alex
+        key: "ssh_idrsa AAAC*&........"
+
+    - name: add sudoers file foe Alex
+      tags: always
+      copy:
+        src: sudoer_alex
+        dest: /etc/sudoers.d/alex
+        owner: root
+        group: root
+        mode: 0440
+---

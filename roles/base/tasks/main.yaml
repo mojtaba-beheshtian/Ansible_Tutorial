@@ -1,0 +1,5 @@
+- name: add ssh key
+  authorized_key:
+    user: alex
+    key: "ssk_idrsa AAAC.........."
+

@@ -1,0 +1,43 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+
+    - name: install update (CentOS)
+      tags: always
+      yum:
+        update_only: yes
+        update_cache: yes
+      when: ansible_distribute == CentOS
+
+    - name: install update (Ubuntu)
+      tags: always
+      apt:
+        upgrade: dist
+        update_cache: yes
+      when: ansible_distribute == Ubuntu
+---
+- host: all
+  become: true
+  roles:
+    - base
+---
+- hosts: workstations
+  become: true
+  roles:
+    - workstations
+---
+- host: web_servers
+  become: true
+  roles:
+    - web_servers
+---
+- host: db_servers
+  become: true
+  roles:
+    - db_servers
+---
+- host: file_servers
+  become: true
+  roles:
+    - file_servers

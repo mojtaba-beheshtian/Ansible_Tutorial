@@ -17,23 +17,23 @@
         update_cache: yes
       when: ansible_distribute == Ubuntu
 ---
-- host: all
+- hosts: all
   become: true
   tasks:
 
-    - name: Create user name
+    - name: Create user
       tags: always
       user:
-        name: alix
-        groups: root
+        name: alex
+        groups: root 
 
-    - name: add ssk key foe Alex
+    - name: add ssh key for Alex
       tags: always
       authorized_key:
         user: alex
-        key: "ssh_idrsa AAAC*&........"
+        key: "ssh-id AAAAC......."
 
-    - name: add sudoers file foe Alex
+    - name: add sudoers file for Ales
       tags: always
       copy:
         src: sudoer_alex
@@ -41,6 +41,7 @@
         owner: root
         group: root
         mode: 06440
+
 ---
 - hosts: workstations
   become: true
