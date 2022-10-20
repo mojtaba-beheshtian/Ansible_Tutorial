@@ -5,7 +5,7 @@ Reference:
 Ansible is an agentless automation tool that you install on a single host (referred to as the control node)
 From the control node, Ansible can manage an entire fleet of machines and other devices (referred to as managed nodes) remotely with  SSH, Powershell remoting, and numerous other transports, all from a simple command-line interface with no databases or daemons required.
 
-Control node requirements
+Control node requirements:
 For your control node (the machine that runs Ansible), you can use nearly any UNIX-like machine with Python 3.8 or newer installed.
 
 Control node requirements:

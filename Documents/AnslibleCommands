@@ -1,5 +1,5 @@
 Reference:
-1. https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
+1. https://docs.Ansible.com/Ansible/latest/installation_guide/intro_installation.html
 2. Mr.Jay LaCroix
 
 ther nodes requirements:
@@ -18,7 +18,7 @@ $ ansible all --key-file ~/.ssh/id_rsa.pub -i inventory -m ping
 #test the connection between controle node and other nodes.
 # -m : module 
 
-$ vi ansible.cfg
+$ vi Ansible.cfg
 [defauls]
 inventory = inventory
 private_key_file = ~/.ssh/id_rsa.pub

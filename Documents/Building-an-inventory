@@ -1,0 +1,60 @@
+Building an inventory
+-----------------------
+Inventories organize managed nodes in centralized files that provide Ansible with system information and network locations. Using an inventory file, Ansible can manage a large number of hosts with a single command. Inventories also help you use Ansible more efficiently by reducing the number of command-line options you need to specify. For example, inventories usually contain the SSH user so you do not need to include the -u flag when running Ansible commands.
+
+In the previous section, you added managed nodes directly to the /etc/ansible/hosts file. Now let’s create an inventory file that you can add to source control for flexibility, reuse, and for sharing with other users.
+
+Note:
+Inventory files can be in INI or YAML format. For demonstration purposes this section uses YAML format only.
+
+Complete the following steps:
+
+1. Open a terminal window on your control node.
+
+2. Create a new inventory file named inventory.yaml in any directory and open it for editing.
+
+3. Add a new group for your hosts then specify the IP address or fully qualified domain name (FQDN) of each managed node with the ansible_host field. The following example adds the IP addresses of three virtual machines in KVM:
+
+    virtualmachines:
+      hosts:
+        vm01:
+          ansible_host: 192.0.2.50
+        vm02:
+          ansible_host: 192.0.2.51
+        vm03:
+          ansible_host: 192.0.2.52
+
+4. Verify your inventory. If you created your inventory in a directory other than your home directory, specify the full path with the -i option.
+
+	ansible-inventory -i inventory.yaml --list
+
+5. Ping the managed nodes in your inventory. In this example, the group name is virtualmachines which you can specify with the ansible command instead of all.
+
+	ansible virtualmachines -m ping -i inventory.yaml
+
+ansible virtualmachines -m ping -i inventory.yaml
+
+vm03 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+vm02 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+vm01 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+
+Congratulations! You have successfully built an inventory.
+
